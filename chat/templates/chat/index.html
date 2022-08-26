@@ -364,7 +364,16 @@ myFunction.call(this);
 function myFunction(){
 $(".clearfix1").removeClass("active");
 $(this).addClass("active");
+
 var ins=$(this).attr("name");
+var ins2 = '{{user.username}}';
+var ins_list = [ins,ins2];
+var ins_list = ins_list.sort();
+var roomname = ins_list[0] + ins_list[1];
+var url = 'ws://' + window.location.host + '/ws/'+roomname+'/';        
+alert(roomname);
+var chatSocket = new WebSocket(url);
+     alert("ready");
 alert($(this).attr("name"));
 $(".chat-history-list").empty();
 $.ajax({
@@ -376,13 +385,14 @@ $.ajax({
       success: function(data){
          var data = data["messages"];
          for (let item in data){
-         alert(data[item].sender_id);
-         alert('{{user.username}}');
+         //alert(data[item].sender_id);
+         //alert('{{user.username}}');
          if (data[item].sender_id == '{{user.id}}') {
          $(".chat-history-list").append(`<li class="clearfix"><div class="message-data"><span class="message-data-time">${data[item].timestamp}</span></div><div class="message my-message">${data[item].content}</div></li>`);}else{$(".chat-history-list").append(`<li class="clearfix"><div class="message-data text-right"> <span class="message-data-time">${data[item].timestamp}</span><img src="https://bootdey.com/img/Content/avatar/avatar7.png" alt="avatar"></div><div class="message other-message float-right">${data[item].content}</div> </li>`);}
          };
       }
     }) ;
+    
 $(".nn").text(ins);
 }
 </script>
