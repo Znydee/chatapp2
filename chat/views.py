@@ -23,8 +23,8 @@ def get_message(request):
              item["timestamp"] = "now"
         else:
             item["timestamp"] = f"{item['timestamp']} ago"
-        print(item["timestamp"])
-    print(messages)
+        #print(item["timestamp"])
+    #print(messages)
     return JsonResponse({"messages": messages})
     
 def register(request):    

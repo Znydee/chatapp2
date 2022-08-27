@@ -344,9 +344,9 @@ body{
                 <div class="chat-message clearfix">
                     <div class="input-group mb-0">
                         <div class="input-group-prepend">
-                            <span class="input-group-text"><i class="fa fa-send"></i></span>
+                            <span class="input-group-text btn " id="send-msg"><i class="fa fa-send"></i></span>
                         </div>
-                        <input type="text" class="form-control" placeholder="Enter text here...">                                    
+                        <input type="text" class="form-control" id="message" placeholder="Enter text here...">                                    
                     </div>
                 </div>
             </div>
@@ -355,26 +355,32 @@ body{
 </div>
 </div>
 <script type="text/javascript">
+var websocket_list = [];
 $(document).ready(function(){
+    //var websocket_list = ["mwhdjd","gshsjj"];
     $("#znydee1").trigger('click'); 
+    
 });
 $(".clearfix1").click(function(){
 myFunction.call(this);
 });
 function myFunction(){
+//alert(websocket_list);
+for(let item in websocket_list){websocket_list[item].close();};
 $(".clearfix1").removeClass("active");
 $(this).addClass("active");
-
 var ins=$(this).attr("name");
 var ins2 = '{{user.username}}';
 var ins_list = [ins,ins2];
 var ins_list = ins_list.sort();
 var roomname = ins_list[0] + ins_list[1];
 var url = 'ws://' + window.location.host + '/ws/'+roomname+'/';        
-alert(roomname);
-var chatSocket = new WebSocket(url);
-     alert("ready");
-alert($(this).attr("name"));
+//alert(roomname);
+var chatSocket =  new WebSocket(url);
+websocket_list.push(chatSocket);
+//alert(websocket_list);
+     //alert("ready");
+//alert($(this).attr("name"));
 $(".chat-history-list").empty();
 $.ajax({
       type:'GET',
@@ -392,8 +398,30 @@ $.ajax({
          };
       }
     }) ;
-    
+    chatSocket.onmessage = function(e) {
+         //alert("message recieved");
+            var data = JSON.parse(e.data);
+            //$(".chat-history-list" ).append(`<div class="container darker">${data.message}</div>`);
+            if (data.sender == '{{user.username}}') {$(".chat-history-list").append(`<li class="clearfix"><div class="message-data"><span class="message-data-time">sometime</span></div><div class="message my-message">${data.message}</div></li>`);$('#message').val("");}else{$(".chat-history-list").append(`<li class="clearfix"><div class="message-data text-right"> <span class="message-data-time">sometime</span><img src="https://bootdey.com/img/Content/avatar/avatar7.png" alt="avatar"></div><div class="message other-message float-right">${data.message}</div> </li>`);$('#message').val("");}
+        };
+    chatSocket.onclose = function(e)
+ {
+    console.error('Chat socket closed unexpectedly');
+  };
 $(".nn").text(ins);
+$("#send-msg").click(function(e){
+  //alert("message about to be sent");
+  var message = $('#message').val();
+  var sender = '{{user.username}}';
+  
+  chatSocket.send(JSON.stringify({
+                  'sender': sender,
+                'message': message
+            }));
+        //alert(message);
+       //alert("message sent");
+  });
+  
 }
 </script>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>

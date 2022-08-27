@@ -31,6 +31,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'channels',
     'chat',
     'crispy_forms',
     'django.contrib.admin',
@@ -123,10 +124,19 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/4.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-
+ASGI_APPLICATION = 'chatapp2.asgi.application'
 STATIC_URL = 'static/'
 
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
 
 LOGIN_URL = "login"
 LOGIN_REDIRECT_URL = "home"
+
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels_redis.core.RedisChannelLayer',
+        'CONFIG': {
+            "hosts": [('127.0.0.1', 6379)],
+        },
+    },
+}
