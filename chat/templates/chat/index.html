@@ -263,6 +263,7 @@ body{
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+       <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-timeago/1.6.0/jquery.timeago.min.js" integrity="sha512-4g1PvFI8aR8IYr3mnvKJpjkarHtqNstmP/teCXWyMZImLPOJ+uK01Co6UnMCMtD12I4N3zQUNSJ3EVJpbwhQmw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 </head>
 <body>
 <nav class="navbar navbar-light bg-light mt-3">
@@ -356,16 +357,13 @@ body{
 </div>
 <script type="text/javascript">
 var websocket_list = [];
-$(document).ready(function(){
-    //var websocket_list = ["mwhdjd","gshsjj"];
+$(document).ready(function(){       
     $("#znydee1").trigger('click'); 
-    
 });
 $(".clearfix1").click(function(){
 myFunction.call(this);
 });
 function myFunction(){
-//alert(websocket_list);
 for(let item in websocket_list){websocket_list[item].close();};
 $(".clearfix1").removeClass("active");
 $(this).addClass("active");
@@ -375,12 +373,8 @@ var ins_list = [ins,ins2];
 var ins_list = ins_list.sort();
 var roomname = ins_list[0] + ins_list[1];
 var url = 'ws://' + window.location.host + '/ws/'+roomname+'/';        
-//alert(roomname);
 var chatSocket =  new WebSocket(url);
 websocket_list.push(chatSocket);
-//alert(websocket_list);
-     //alert("ready");
-//alert($(this).attr("name"));
 $(".chat-history-list").empty();
 $.ajax({
       type:'GET',
@@ -391,32 +385,34 @@ $.ajax({
       success: function(data){
          var data = data["messages"];
          for (let item in data){
-         //alert(data[item].sender_id);
-         //alert('{{user.username}}');
          if (data[item].sender_id == '{{user.id}}') {
-         $(".chat-history-list").append(`<li class="clearfix"><div class="message-data"><span class="message-data-time">${data[item].timestamp}</span></div><div class="message my-message">${data[item].content}</div></li>`);}else{$(".chat-history-list").append(`<li class="clearfix"><div class="message-data text-right"> <span class="message-data-time">${data[item].timestamp}</span><img src="https://bootdey.com/img/Content/avatar/avatar7.png" alt="avatar"></div><div class="message other-message float-right">${data[item].content}</div> </li>`);}
+         $(".chat-history-list").append(`<li class="clearfix"><div class="message-data"><time class="message-data-time timeago" datetime="${data[item].timestamp}"></time></div><div class="message my-message">${data[item].content}</div></li>`);}else{$(".chat-history-list").append(`<li class="clearfix"><div class="message-data text-right"> <time class="message-data-time timeago" datetime="${data[item].timestamp}"></time><img src="https://bootdey.com/img/Content/avatar/avatar7.png" alt="avatar"></div><div class="message other-message float-right">${data[item].content}</div> </li>`);}
          };
+         jQuery(".timeago").timeago();
       }
     }) ;
     chatSocket.onmessage = function(e) {
-         //alert("message recieved");
             var data = JSON.parse(e.data);
-            //$(".chat-history-list" ).append(`<div class="container darker">${data.message}</div>`);
-            if (data.sender == '{{user.username}}') {$(".chat-history-list").append(`<li class="clearfix"><div class="message-data"><span class="message-data-time">sometime</span></div><div class="message my-message">${data.message}</div></li>`);$('#message').val("");}else{$(".chat-history-list").append(`<li class="clearfix"><div class="message-data text-right"> <span class="message-data-time">sometime</span><img src="https://bootdey.com/img/Content/avatar/avatar7.png" alt="avatar"></div><div class="message other-message float-right">${data.message}</div> </li>`);$('#message').val("");}
+            var time_ag= new  Date().toISOString();
+             
+                if (data.sender == '{{user.username}}') {$(".chat-history-list").append(`<li class="clearfix"><div class="message-data"><time class="message-data-time timeago" datetime="${time_ag}"></time></div><div class="message my-message">${data.message}</div></li>`);$('#message').val("");}else{$(".chat-history-list").append(`<li class="clearfix"><div class="message-data text-right"> <time class="message-data-time timeago" datetime="${time_ag}"></time><img src="https://bootdey.com/img/Content/avatar/avatar7.png" alt="avatar"></div><div class="message other-message float-right">${data.message}</div> </li>`);$('#message').val("");}
+            jQuery(".timeago").timeago();
         };
     chatSocket.onclose = function(e)
  {
     console.error('Chat socket closed unexpectedly');
   };
 $(".nn").text(ins);
+
 $("#send-msg").click(function(e){
   //alert("message about to be sent");
   var message = $('#message').val();
   var sender = '{{user.username}}';
-  
+  var reciever = $(".nn").text();
   chatSocket.send(JSON.stringify({
                   'sender': sender,
-                'message': message
+                'message': message,
+                'reciever':reciever
             }));
         //alert(message);
        //alert("message sent");
@@ -424,7 +420,8 @@ $("#send-msg").click(function(e){
   
 }
 </script>
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<!--<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>-->
+
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jscroll/2.4.1/jquery.jscroll.min.js"></script>
