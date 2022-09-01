@@ -32,6 +32,7 @@ ALLOWED_HOSTS = []
 
 INSTALLED_APPS = [
     'channels',
+    'notifications', 
     'chat',
     'crispy_forms',
     'django.contrib.admin',

@@ -17,7 +17,7 @@ def get_message(request):
     messages = Message.objects.filter(sender=request.user, reciever = ins)|Message.objects.filter(reciever=request.user, sender = ins)
     messages = messages.order_by("timestamp")
     messages=list(messages.values())
-    print(messages)
+    #print(messages)
     #for item in messages:
 #        item["timestamp"] = timesince(item["timestamp"])
 #        if item["timestamp"] == "0\xa0minutes":
