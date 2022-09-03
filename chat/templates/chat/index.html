@@ -298,13 +298,15 @@ body{
                 
                 <ul class="list-unstyled chat-list mt-2 mb-0">
                 {%for item in people%}
+                {%if item.username != user.username%}
                     <li class="clearfix clearfix1" id={{item.username}}  name={{item.username}}>
-                        <img src="https://bootdey.com/img/Content/avatar/avatar1.png" alt="avatar">
+                        <img src="https://i0.wp.com/ifpo.org.uk/wp-content/uploads/2020/10/cropped-9-93879_computer-icons-user-image-person-silhouette-user-silhouettes-5.png" alt="avatar">
                         <div class="about">
                             <div class="name" >{{item.username}}</div>                                           
                         </div>
-                        <span class="ml-3"></span>
+                      <span class="badge badge-dark ml-3"></span>
                     </li>
+                 {%endif%}
                 {%endfor%}
               </ul>
             </div>
@@ -313,7 +315,7 @@ body{
                     <div class="row">
                         <div class="col-lg-6">
                             <a href="javascript:void(0);" data-toggle="modal" data-target="#view_info">
-                                <img src="https://bootdey.com/img/Content/avatar/avatar2.png" alt="avatar">
+                                <img src="https://i0.wp.com/ifpo.org.uk/wp-content/uploads/2020/10/cropped-9-93879_computer-icons-user-image-person-silhouette-user-silhouettes-5.png" alt="avatar">
                             </a>
                             <div class="chat-about">
                                 <h6 class="m-b-0 nn">Aiden Chavez</h6>
@@ -325,25 +327,6 @@ body{
                 </div>
                 <div class="chat-history">
                     <ul class="m-b-0 chat-history-list">
-                        <li class="clearfix">
-                            <div class="message-data text-right">
-                                <span class="message-data-time">10:10 AM, Today</span>
-                                <img src="https://bootdey.com/img/Content/avatar/avatar7.png" alt="avatar">
-                            </div>
-                            <div class="message other-message float-right"> Hi Aiden, how are you? How is the project coming along? </div>
-                        </li>
-                        <li class="clearfix">
-                            <div class="message-data">
-                                <span class="message-data-time">10:12 AM, Today</span>
-                            </div>
-                            <div class="message my-message">Are we meeting today?</div>                                    
-                        </li>                               
-                        <li class="clearfix">
-                            <div class="message-data">
-                                <span class="message-data-time">10:15 AM, Today</span>
-                            </div>
-                            <div class="message my-message">Project has been already finished and I have results to show you.</div>
-                        </li>
                     </ul>
                 </div>
                 <div class="chat-message clearfix">
@@ -373,6 +356,7 @@ $(".clearfix1").click(function(){
 myFunction.call(this);
 });
 function myFunction(){
+$(".badge-dark").text("");
 for(let item in websocket_list){websocket_list[item].close();};
 $(".clearfix1").removeClass("active");
 $(this).addClass("active");
@@ -395,16 +379,28 @@ $.ajax({
          var data = data["messages"];
          for (let item in data){
          if (data[item].sender_id == '{{user.id}}') {
-         $(".chat-history-list").append(`<li class="clearfix"><div class="message-data"><time class="message-data-time timeago" datetime="${data[item].timestamp}"></time></div><div class="message my-message">${data[item].content}</div></li>`);}else{$(".chat-history-list").append(`<li class="clearfix"><div class="message-data text-right"> <time class="message-data-time timeago" datetime="${data[item].timestamp}"></time><img src="https://bootdey.com/img/Content/avatar/avatar7.png" alt="avatar"></div><div class="message other-message float-right">${data[item].content}</div> </li>`);}
+         $(".chat-history-list").append(`<li class="clearfix"><div class="message-data"><time class="message-data-time timeago" datetime="${data[item].timestamp}"></time></div><div class="message my-message">${data[item].content}</div></li>`);}else{$(".chat-history-list").append(`<li class="clearfix"><div class="message-data text-right"> <time class="message-data-time timeago" datetime="${data[item].timestamp}"></time><img src="https://i0.wp.com/ifpo.org.uk/wp-content/uploads/2020/10/cropped-9-93879_computer-icons-user-image-person-silhouette-user-silhouettes-5.png" alt="avatar"></div><div class="message other-message float-right">${data[item].content}</div> </li>`);}
          };
          jQuery(".timeago").timeago();
+         
+      }
+    }) ;
+    $.ajax({
+      type:'POST',
+      url:"{% url 'message_as_read' %}",
+      data:{
+          sender:ins,
+            csrfmiddlewaretoken: '{{ csrf_token }}'
+      },
+      success: function(data){
+      
       }
     }) ;
     chatSocket.onmessage = function(e) {
             var data = JSON.parse(e.data);
             var time_ag= new  Date().toISOString();
              
-                if (data.sender == '{{user.username}}') {$(".chat-history-list").append(`<li class="clearfix"><div class="message-data"><time class="message-data-time timeago" datetime="${time_ag}"></time></div><div class="message my-message">${data.message}</div></li>`);$('#message').val("");}else{$(".chat-history-list").append(`<li class="clearfix"><div class="message-data text-right"> <time class="message-data-time timeago" datetime="${time_ag}"></time><img src="https://bootdey.com/img/Content/avatar/avatar7.png" alt="avatar"></div><div class="message other-message float-right">${data.message}</div> </li>`);$('#message').val("");}
+                if (data.sender == '{{user.username}}') {$(".chat-history-list").append(`<li class="clearfix"><div class="message-data"><time class="message-data-time timeago" datetime="${time_ag}"></time></div><div class="message my-message">${data.message}</div></li>`);$('#message').val("");}else{$(".chat-history-list").append(`<li class="clearfix"><div class="message-data text-right"> <time class="message-data-time timeago" datetime="${time_ag}"></time><img src="https://i0.wp.com/ifpo.org.uk/wp-content/uploads/2020/10/cropped-9-93879_computer-icons-user-image-person-silhouette-user-silhouettes-5.png" alt="avatar"></div><div class="message other-message float-right">${data.message}</div> </li>`);$('#message').val("");}
             jQuery(".timeago").timeago();
         };
     chatSocket.onclose = function(e)

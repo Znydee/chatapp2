@@ -5,6 +5,7 @@ from .models import Message
 from django.contrib.auth.decorators import login_required
 from .forms import UserRegisterForm
 from django.utils.timesince import timesince
+from notifications.models import Notification
 # Create your views here.
 @login_required
 def home(request):
@@ -17,15 +18,6 @@ def get_message(request):
     messages = Message.objects.filter(sender=request.user, reciever = ins)|Message.objects.filter(reciever=request.user, sender = ins)
     messages = messages.order_by("timestamp")
     messages=list(messages.values())
-    #print(messages)
-    #for item in messages:
-#        item["timestamp"] = timesince(item["timestamp"])
-#        if item["timestamp"] == "0\xa0minutes":
-#             item["timestamp"] = "now"
-#        else:
-#            item["timestamp"] = f"{item['timestamp']} ago"
-        #print(item["timestamp"])
-    #print(messages)
     return JsonResponse({"messages": messages})
     
 def register(request):    
@@ -37,3 +29,15 @@ def register(request):
     else:
         form=UserRegisterForm()            
     return render(request,"chat/register.html", {"form":form})
+    
+def mark_specific_as_read(request):
+    sender_name =  request.POST["sender"]
+    sender =  User.objects.get(username=sender_name).id
+    reciever = request.user.id
+    n=Notification.objects.filter(actor_object_id = sender,recipient=reciever)
+    n.mark_all_as_read() 
+    n.delete()
+    print(sender)
+    print(reciever)
+    print(n)
+    return HttpResponse("done")

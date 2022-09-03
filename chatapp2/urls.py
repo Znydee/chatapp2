@@ -16,7 +16,7 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path,include
 from django.contrib.auth import views as auth_views
-from chat.views import register
+from chat.views import register,mark_specific_as_read
 import notifications.urls
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -24,5 +24,6 @@ urlpatterns = [
     path('login',auth_views.LoginView.as_view(template_name="chat/login.html"),name="login"),
     path('logout',auth_views.LogoutView.as_view(template_name="chat/logout.html"),name="logout"),
     path('register',register,name="register"),
+    path('mark_specific_as_read',mark_specific_as_read,name="message_as_read"),
     path('^inbox/notifications/', include(notifications.urls, namespace='notifications'))
 ]

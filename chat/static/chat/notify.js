@@ -84,16 +84,20 @@ function fetch_api_data() {
 }
 
 function my_special_notification_callback(data) {
-   // for (var i=0; i < data.unread_list.length; i++) {
-      //  msg = data.unread_list[i];
-        //console.log(msg);
-      //  alert(msg);
-    //}
-    $("<div class='border border-dark'>new message</div>").insertBefore(".list-unstyled")
-    for (let item in data.unread_list){
-    targ = data.unread_list[item].actor;
-    
-   $(`li#${data.unread_list[item].actor} > span`).text("new")};
+ //$(".badge-dark").text("");
+
+   //$(".alert-success").remove();
+   //alert(data.unread_list);
+   if(data.unread_list.length > 0){
+        if ($(".alert-success")[0]){
 }
+        else{$("<div class='alert alert-success mt-3'>new message</div>").insertBefore(".list-unstyled");};
+     }
+  else{$(".alert-success").remove();};
+       for (let item in data.unread_list){
+                    targ = data.unread_list[item].actor;    
+                    $(`li#${data.unread_list[item].actor} > span`).text("new")
+                };
+};
 
 setTimeout(fetch_api_data, 1000);
